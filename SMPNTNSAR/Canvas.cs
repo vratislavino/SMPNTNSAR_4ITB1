@@ -16,6 +16,7 @@ namespace SMPNTNSAR
         public IReadOnlyList<Shape> Shapes => shapes;
 
         private Shape selectedShape = null;
+        private bool dragging = false;
 
         public Canvas()
         {
@@ -44,31 +45,44 @@ namespace SMPNTNSAR
 
         private void Canvas_MouseDown(object sender, MouseEventArgs e)
         {
-
+            if(selectedShape != null)
+            {
+                dragging = true;
+                selectedShape.moveOffsetX = e.X - selectedShape.X;
+                selectedShape.moveOffsetY = e.Y - selectedShape.Y;
+            }
         }
 
         private void Canvas_MouseUp(object sender, MouseEventArgs e)
         {
-
+            dragging = false;
         }
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
-            var shape = shapes.FirstOrDefault(s => s.IsMouseOver(e.X, e.Y));
-            if(shape != null)
-            {
+            if(dragging)
+            {   
                 if(selectedShape != null)
-                {
-                    selectedShape.Highlight(false);
-                }
-                selectedShape = shape;
-                selectedShape.Highlight(true);
+                    selectedShape.SetLocation(e.X, e.Y);
             } else
             {
-                if(selectedShape != null)
+                var shape = shapes.FirstOrDefault(s => s.IsMouseOver(e.X, e.Y));
+                if (shape != null)
                 {
-                    selectedShape.Highlight(false);
-                    selectedShape = null;
+                    if (selectedShape != null)
+                    {
+                        selectedShape.Highlight(false);
+                    }
+                    selectedShape = shape;
+                    selectedShape.Highlight(true);
+                }
+                else
+                {
+                    if (selectedShape != null)
+                    {
+                        selectedShape.Highlight(false);
+                        selectedShape = null;
+                    }
                 }
             }
 

@@ -10,7 +10,11 @@ namespace SMPNTNSAR
     public abstract class Shape
     {
         protected int x;
+        public int X => x;
+
         protected int y;
+        public int Y => y;
+
         protected int width;
         protected int height;
 
@@ -21,6 +25,9 @@ namespace SMPNTNSAR
 
         protected bool highlighted;
         protected static Pen highlightPen;
+
+        public int moveOffsetX;
+        public int moveOffsetY;
 
         public Shape(int x, int y, bool filled, Color color)
         {
@@ -54,5 +61,11 @@ namespace SMPNTNSAR
 
         public abstract bool IsMouseOver(int mx, int my);
         public abstract void DoYourThing();
+
+        public void SetLocation(int x, int y)
+        {
+            this.x = x - moveOffsetX;
+            this.y = y - moveOffsetY;
+        }
     }
 }
