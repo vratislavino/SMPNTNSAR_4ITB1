@@ -11,6 +11,7 @@ namespace SMPNTNSAR
         public Square(int x, int y, bool filled, Color color) : base(x, y, filled, color)
         {
         }
+        public Square(ShapeDTO shapeDTO) : base(shapeDTO) { }
 
         public override void DoYourThing()
         {

@@ -1,10 +1,13 @@
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace SMPNTNSAR
 {
     public partial class Form1 : Form
     {
         // TODO: Použít DP template na Draw, abychom zachovali poøadí obj->outline
+
+        SaveLoadManager saveLoadManager = new SaveLoadManager();
 
         public Form1()
         {
@@ -15,7 +18,7 @@ namespace SMPNTNSAR
         {
             Type typ = typeof(Shape);
             Assembly assembly = Assembly.GetExecutingAssembly();
-            
+
             var types = assembly.GetTypes();
             foreach (var type in types)
             {
@@ -25,7 +28,7 @@ namespace SMPNTNSAR
                 }
             }
 
-            if(comboBox1.Items.Count > 0)
+            if (comboBox1.Items.Count > 0)
             {
                 comboBox1.SelectedIndex = 0;
             }
@@ -42,7 +45,7 @@ namespace SMPNTNSAR
         private void button3_Click(object sender, EventArgs e)
         {
             var typeOfShape = (Type)comboBox1.SelectedItem;
-            if(typeOfShape == null)
+            if (typeOfShape == null)
             {
                 MessageBox.Show(
                     "Choose vadlid type of shape!",
@@ -59,9 +62,9 @@ namespace SMPNTNSAR
                 canvas1.Height / 2,
                 checkBox1.Checked,
                 button1.BackColor);
-            
+
             canvas1.AddShape((Shape)newShape);
-            
+
             /*
             canvas1.AddShape(new Square(
                 canvas1.Width / 2,
@@ -76,5 +79,29 @@ namespace SMPNTNSAR
             canvas1.ClearShapes();
         }
 
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "JSON files (*.json)|*.json";
+            if(saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                var path = saveFileDialog.FileName;
+                saveLoadManager.SaveShapesNonAsync(path, canvas1.Shapes);
+            }
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "JSON files (*.json)|*.json";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                var path = openFileDialog.FileName;
+                var loadedShapes = saveLoadManager.LoadShapesNonAsync(path);
+
+                canvas1.ClearShapes();
+                loadedShapes.ForEach(s => canvas1.AddShape(s));
+            }
+        }
     }
 }

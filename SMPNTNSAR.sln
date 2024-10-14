@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMPNTNSAR", "SMPNTNSAR\SMPNTNSAR.csproj", "{3554B963-9925-4BF3-8E41-551B6264BCE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMPNTNSAR", "SMPNTNSAR\SMPNTNSAR.csproj", "{3554B963-9925-4BF3-8E41-551B6264BCE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyNewShapes", "MyNewShapes\MyNewShapes.csproj", "{5100582E-E7D0-42CB-A471-18D87A9C6D4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3554B963-9925-4BF3-8E41-551B6264BCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3554B963-9925-4BF3-8E41-551B6264BCE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3554B963-9925-4BF3-8E41-551B6264BCE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5100582E-E7D0-42CB-A471-18D87A9C6D4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5100582E-E7D0-42CB-A471-18D87A9C6D4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5100582E-E7D0-42CB-A471-18D87A9C6D4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5100582E-E7D0-42CB-A471-18D87A9C6D4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

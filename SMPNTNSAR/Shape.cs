@@ -37,13 +37,29 @@ namespace SMPNTNSAR
             this.y = y - height / 2;
             this.filled = filled;
             this.color = color;
+            InitRuntimeValues();
+        }
 
+        private void InitRuntimeValues()
+        {
             highlighted = false;
             pen = new Pen(color, 8f);
             brush = new SolidBrush(color);
             highlightPen = new Pen(Color.Black, 2f);
             highlightPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
             highlightPen.DashPattern = new float[] { 5, 5 };
+        }
+
+        public Shape(ShapeDTO data)
+        {
+            this.width = data.width;
+            this.height = data.height;
+            this.x = data.x;
+            this.y = data.y;
+            this.filled = data.filled;
+            this.color = Color.FromArgb(data.R, data.G, data.B);
+
+            InitRuntimeValues();
         }
 
         public virtual void Draw(Graphics g)
@@ -66,6 +82,42 @@ namespace SMPNTNSAR
         {
             this.x = x - moveOffsetX;
             this.y = y - moveOffsetY;
+        }
+
+        public ShapeDTO GetDTO()
+        {
+            return new ShapeDTO(this);
+        }
+
+        public class ShapeDTO
+        {
+            public int x;
+            public int y;
+
+            public int width;
+            public int height;
+
+            public bool filled;
+            public int R;
+            public int G;
+            public int B;
+
+            public Type shapeType;
+
+            public ShapeDTO(Shape shape)
+            {
+                x = shape.x;
+                y = shape.y;
+                width = shape.width;
+                height = shape.height;
+                filled = shape.filled;
+                R = shape.color.R;
+                G = shape.color.G;
+                B = shape.color.B;
+                shapeType = shape.GetType();
+            }
+
+            public ShapeDTO() { } 
         }
     }
 }

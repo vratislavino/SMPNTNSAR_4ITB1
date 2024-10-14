@@ -145,19 +145,21 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(208, 26);
+            saveToolStripMenuItem.Size = new Size(224, 26);
             saveToolStripMenuItem.Text = "Save";
+            saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // loadToolStripMenuItem
             // 
             loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            loadToolStripMenuItem.Size = new Size(208, 26);
+            loadToolStripMenuItem.Size = new Size(224, 26);
             loadToolStripMenuItem.Text = "Load";
+            loadToolStripMenuItem.Click += loadToolStripMenuItem_Click;
             // 
             // addMoreShapesToolStripMenuItem
             // 
             addMoreShapesToolStripMenuItem.Name = "addMoreShapesToolStripMenuItem";
-            addMoreShapesToolStripMenuItem.Size = new Size(208, 26);
+            addMoreShapesToolStripMenuItem.Size = new Size(224, 26);
             addMoreShapesToolStripMenuItem.Text = "Add more shapes";
             // 
             // canvas1

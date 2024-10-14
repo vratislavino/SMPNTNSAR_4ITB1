@@ -12,6 +12,8 @@ namespace SMPNTNSAR
         {
         }
 
+        public Circle(ShapeDTO shapeDTO) : base(shapeDTO) { }
+
         public override void DoYourThing()
         {
             throw new NotImplementedException();
