@@ -102,7 +102,7 @@ namespace SMPNTNSAR
             public int G;
             public int B;
 
-            public Type shapeType;
+            public string shapeType;
 
             public ShapeDTO(Shape shape)
             {
@@ -114,7 +114,7 @@ namespace SMPNTNSAR
                 R = shape.color.R;
                 G = shape.color.G;
                 B = shape.color.B;
-                shapeType = shape.GetType();
+                shapeType = shape.GetType().ToString();
             }
 
             public ShapeDTO() { } 

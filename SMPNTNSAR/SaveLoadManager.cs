@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -17,14 +18,15 @@ namespace SMPNTNSAR
             return JsonConvert.DeserializeObject<List<Shape>>(stringToLoad);
         }
 
-        public List<Shape> LoadShapesNonAsync(string path)
+        public List<Shape> LoadShapesNonAsync(string path, Dictionary<string, Assembly> dict)
         {
             var stringToLoad = File.ReadAllText(path);
 
             var dtos = JsonConvert.DeserializeObject<List<Shape.ShapeDTO>>(stringToLoad);
-            var shapes = dtos.Select(dto => 
-                Activator.CreateInstance(dto.shapeType, dto) as Shape
-            ).ToList();
+            var shapes = dtos.Select(dto => {
+                Type t = dict[dto.shapeType].GetType(dto.shapeType);
+                return Activator.CreateInstance(t, dto) as Shape;
+            }).ToList();
 
             return shapes;
         }
@@ -41,23 +43,47 @@ namespace SMPNTNSAR
             File.WriteAllText(path, stringToSave);
         }
 
-        public void CopyDllToAppData(string path)
+        public bool CopyDllToAppData(string path)
         {
             var finalPath = "";
 
             var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             appDataPath = Path.Combine(appDataPath, "MyNewShapes_4ITB1");
-            if(!Directory.Exists(appDataPath))
+            if (!Directory.Exists(appDataPath))
             {
                 Directory.CreateDirectory(appDataPath);
             }
 
             finalPath = Path.Combine(appDataPath, Path.GetFileName(path));
-            
+
             Debug.WriteLine(finalPath);
-            File.Copy(path, finalPath);
+            try
+            {
+                File.Copy(path, finalPath, true);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                return false;
+            }
         }
 
-
+        public List<Assembly> GetAssembliesFromAppData()
+        {
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            appDataPath = Path.Combine(appDataPath, "MyNewShapes_4ITB1");
+            if (!Directory.Exists(appDataPath))
+            {
+                return new List<Assembly>();
+            }
+            var assemblies = new List<Assembly>();
+            var files = Directory.GetFiles(appDataPath, "*.dll");
+            foreach(var file in files)
+            {
+                assemblies.Add(Assembly.LoadFrom(file));
+            }
+            return assemblies;
+        }
     }
 }

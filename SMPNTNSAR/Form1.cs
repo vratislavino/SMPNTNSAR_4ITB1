@@ -9,6 +9,8 @@ namespace SMPNTNSAR
         // TODO: Použít DP template na Draw, abychom zachovali poøadí obj->outline
 
         SaveLoadManager saveLoadManager = new SaveLoadManager();
+        Dictionary<string, Assembly> assemblyDictionary 
+            = new Dictionary<string, Assembly>();
 
         public Form1()
         {
@@ -36,6 +38,7 @@ namespace SMPNTNSAR
             {
                 if (type.IsSubclassOf(typeof(Shape)))
                 {
+                    assemblyDictionary.Add(type.ToString(), ass);
                     comboBox1.Items.Add(type);
                 }
             }
@@ -104,7 +107,7 @@ namespace SMPNTNSAR
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 var path = openFileDialog.FileName;
-                var loadedShapes = saveLoadManager.LoadShapesNonAsync(path);
+                var loadedShapes = saveLoadManager.LoadShapesNonAsync(path, assemblyDictionary);
 
                 canvas1.ClearShapes();
                 loadedShapes.ForEach(s => canvas1.AddShape(s));
@@ -118,9 +121,14 @@ namespace SMPNTNSAR
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 var path = openFileDialog.FileName;
-                saveLoadManager.CopyDllToAppData(path);
-                Assembly ass = Assembly.LoadFrom(path);
-                AddAssemblyTypesToComboBox(ass);
+                if (saveLoadManager.CopyDllToAppData(path))
+                {
+                    Assembly ass = Assembly.LoadFrom(path);
+                    AddAssemblyTypesToComboBox(ass);
+                } else
+                {
+                    MessageBox.Show("Nepodaøilo se naèíst DLL, zkontrolujte Log");
+                }
             }
         }
     }
