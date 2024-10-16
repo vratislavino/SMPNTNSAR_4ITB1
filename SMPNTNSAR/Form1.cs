@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -16,21 +17,27 @@ namespace SMPNTNSAR
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Type typ = typeof(Shape);
             Assembly assembly = Assembly.GetExecutingAssembly();
+            AddAssemblyTypesToComboBox(assembly);
 
-            var types = assembly.GetTypes();
-            foreach (var type in types)
-            {
-                if (type.IsSubclassOf(typ))
-                {
-                    comboBox1.Items.Add(type);
-                }
-            }
+            var assemblies = saveLoadManager.GetAssembliesFromAppData();
+            assemblies.ForEach(ass => AddAssemblyTypesToComboBox(ass));
 
             if (comboBox1.Items.Count > 0)
             {
                 comboBox1.SelectedIndex = 0;
+            }
+        }
+
+        private void AddAssemblyTypesToComboBox(Assembly ass)
+        {
+            var types = ass.GetTypes();
+            foreach (var type in types)
+            {
+                if (type.IsSubclassOf(typeof(Shape)))
+                {
+                    comboBox1.Items.Add(type);
+                }
             }
         }
 
@@ -83,7 +90,7 @@ namespace SMPNTNSAR
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "JSON files (*.json)|*.json";
-            if(saveFileDialog.ShowDialog() == DialogResult.OK)
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 var path = saveFileDialog.FileName;
                 saveLoadManager.SaveShapesNonAsync(path, canvas1.Shapes);
@@ -101,6 +108,19 @@ namespace SMPNTNSAR
 
                 canvas1.ClearShapes();
                 loadedShapes.ForEach(s => canvas1.AddShape(s));
+            }
+        }
+
+        private void addMoreShapesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Shapes DLL (*.dll)|*.dll";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                var path = openFileDialog.FileName;
+                saveLoadManager.CopyDllToAppData(path);
+                Assembly ass = Assembly.LoadFrom(path);
+                AddAssemblyTypesToComboBox(ass);
             }
         }
     }

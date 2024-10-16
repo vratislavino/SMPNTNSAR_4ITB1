@@ -23,8 +23,6 @@ namespace MyNewShapes
             return mx >= x && my >= y && mx <= x + width && my <= y + height;
         }
 
-        // TODO: Complete vykreslení a připojit k hlavnímu projektu!
-        // udělat FAQ
         public override void Draw(Graphics g)
         {
             Point[] points = new Point[3];

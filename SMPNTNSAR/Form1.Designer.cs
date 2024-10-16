@@ -161,6 +161,7 @@
             addMoreShapesToolStripMenuItem.Name = "addMoreShapesToolStripMenuItem";
             addMoreShapesToolStripMenuItem.Size = new Size(224, 26);
             addMoreShapesToolStripMenuItem.Text = "Add more shapes";
+            addMoreShapesToolStripMenuItem.Click += addMoreShapesToolStripMenuItem_Click;
             // 
             // canvas1
             // 

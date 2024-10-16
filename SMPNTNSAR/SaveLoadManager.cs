@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
@@ -40,6 +41,22 @@ namespace SMPNTNSAR
             File.WriteAllText(path, stringToSave);
         }
 
+        public void CopyDllToAppData(string path)
+        {
+            var finalPath = "";
+
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            appDataPath = Path.Combine(appDataPath, "MyNewShapes_4ITB1");
+            if(!Directory.Exists(appDataPath))
+            {
+                Directory.CreateDirectory(appDataPath);
+            }
+
+            finalPath = Path.Combine(appDataPath, Path.GetFileName(path));
+            
+            Debug.WriteLine(finalPath);
+            File.Copy(path, finalPath);
+        }
 
 
     }
