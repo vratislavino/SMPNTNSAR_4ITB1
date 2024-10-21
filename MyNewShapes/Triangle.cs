@@ -23,7 +23,7 @@ namespace MyNewShapes
             return mx >= x && my >= y && mx <= x + width && my <= y + height;
         }
 
-        public override void Draw(Graphics g)
+        protected override void DrawShape(Graphics g)
         {
             Point[] points = new Point[3];
             points[0] = new Point(x, y + height);
@@ -38,8 +38,6 @@ namespace MyNewShapes
             {
                 g.DrawPolygon(pen, points);
             }
-
-            base.Draw(g);
         }
     }
 }

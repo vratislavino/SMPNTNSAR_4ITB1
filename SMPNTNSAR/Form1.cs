@@ -1,20 +1,31 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
+using System.Security.Policy;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SMPNTNSAR
 {
     public partial class Form1 : Form
     {
-        // TODO: Použít DP template na Draw, abychom zachovali poøadí obj->outline
-
         SaveLoadManager saveLoadManager = new SaveLoadManager();
-        Dictionary<string, Assembly> assemblyDictionary 
+        Dictionary<string, Assembly> assemblyDictionary
             = new Dictionary<string, Assembly>();
 
         public Form1()
         {
             InitializeComponent();
+            canvas1.ShapesChanged += OnShapesChanged;
+        }
+
+        private void OnShapesChanged()
+        {
+            listBox1.Items.Clear();
+            foreach (var shape in canvas1.Shapes)
+            {
+                listBox1.Items.Add(shape.ToString());
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -22,8 +33,6 @@ namespace SMPNTNSAR
             Assembly assembly = Assembly.GetExecutingAssembly();
             AddAssemblyTypesToComboBox(assembly);
 
-            var assemblies = saveLoadManager.GetAssembliesFromAppData();
-            assemblies.ForEach(ass => AddAssemblyTypesToComboBox(ass));
 
             if (comboBox1.Items.Count > 0)
             {
@@ -33,7 +42,17 @@ namespace SMPNTNSAR
 
         private void AddAssemblyTypesToComboBox(Assembly ass)
         {
-            var types = ass.GetTypes();
+            Type[] types;
+            try
+            {
+                types = ass.GetTypes();
+            }
+            catch (Exception e)
+            {
+                Debug.Write("Unable to load assembly " + ass.FullName + " : " + e.Message);
+                return;
+            }
+
             foreach (var type in types)
             {
                 if (type.IsSubclassOf(typeof(Shape)))
@@ -118,18 +137,57 @@ namespace SMPNTNSAR
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Shapes DLL (*.dll)|*.dll";
+            openFileDialog.Multiselect = true;
+            string errors = "";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                var path = openFileDialog.FileName;
-                if (saveLoadManager.CopyDllToAppData(path))
+
+                foreach (var path in openFileDialog.FileNames)
                 {
-                    Assembly ass = Assembly.LoadFrom(path);
-                    AddAssemblyTypesToComboBox(ass);
-                } else
-                {
-                    MessageBox.Show("Nepodaøilo se naèíst DLL, zkontrolujte Log");
+                    if (saveLoadManager.CopyDllToAppData(path))
+                    {
+                        Assembly ass = Assembly.LoadFrom(path);
+                        AddAssemblyTypesToComboBox(ass);
+                    }
+                    else
+                    {
+                        errors += $"Nepodaøilo se naèíst DLL na cestì {path}, zkontrolujte Log \n";
+
+                    }
                 }
+
+
             }
         }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            foreach (var shape in canvas1.Shapes)
+            {
+                shape.ShowNames(checkBox2.Checked);
+            }
+        }
+
+        private void loadShapesFromAppDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            var assemblies = saveLoadManager.GetAssembliesFromAppData();
+            assemblies.ForEach(ass => AddAssemblyTypesToComboBox(ass));
+        }
+    }
+}
+
+
+public class MyException : Exception
+{
+    public string text;
+    public MyException(string message)
+            : base(message)
+    {
+    }
+
+    public MyException(string message, Exception innerException)
+        : base(message, innerException)
+    {
     }
 }

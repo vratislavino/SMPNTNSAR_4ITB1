@@ -12,6 +12,8 @@ namespace SMPNTNSAR
 {
     public partial class Canvas : UserControl
     {
+        public event Action ShapesChanged;
+
         private List<Shape> shapes = new List<Shape>();
         public IReadOnlyList<Shape> Shapes => shapes;
 
@@ -27,12 +29,14 @@ namespace SMPNTNSAR
         {
             shapes.Add(shape);
             Invalidate();
+            ShapesChanged?.Invoke();
         }
 
         public void ClearShapes()
         {
             shapes.Clear();
             Invalidate();
+            ShapesChanged?.Invoke();
         }
 
         private void Canvas_Paint(object sender, PaintEventArgs e)
@@ -45,26 +49,55 @@ namespace SMPNTNSAR
 
         private void Canvas_MouseDown(object sender, MouseEventArgs e)
         {
-            if(selectedShape != null)
+            if (e.Button == MouseButtons.Left)
             {
-                dragging = true;
-                selectedShape.moveOffsetX = e.X - selectedShape.X;
-                selectedShape.moveOffsetY = e.Y - selectedShape.Y;
+                if (selectedShape != null)
+                {
+                    dragging = true;
+                    selectedShape.moveOffsetX = e.X - selectedShape.X;
+                    selectedShape.moveOffsetY = e.Y - selectedShape.Y;
+                }
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                contextMenuStrip1.Show(this, e.X, e.Y);
+                DisableActions();
+            }
+        }
+
+        private void DisableActions()
+        {
+            if (selectedShape == null) return;
+            toFrontToolStripMenuItem.Enabled =
+                toBackToolStripMenuItem.Enabled = 
+                true;
+
+            if (shapes.IndexOf(selectedShape) == shapes.Count - 1)
+            {
+                toFrontToolStripMenuItem.Enabled = false;
+            }
+            
+            if (shapes.IndexOf(selectedShape) == 0)
+            {
+                toBackToolStripMenuItem.Enabled = false;
             }
         }
 
         private void Canvas_MouseUp(object sender, MouseEventArgs e)
         {
             dragging = false;
+
+            ShapesChanged?.Invoke();
         }
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
-            if(dragging)
-            {   
-                if(selectedShape != null)
+            if (dragging)
+            {
+                if (selectedShape != null)
                     selectedShape.SetLocation(e.X, e.Y);
-            } else
+            }
+            else
             {
                 var shape = shapes.FirstOrDefault(s => s.IsMouseOver(e.X, e.Y));
                 if (shape != null)
@@ -87,6 +120,44 @@ namespace SMPNTNSAR
             }
 
             Invalidate();
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (selectedShape != null)
+            {
+                shapes.Remove(selectedShape);
+                selectedShape = null;
+                Invalidate();
+                ShapesChanged?.Invoke();
+            }
+        }
+
+        private void toBackToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (selectedShape == null) return;
+            int index = shapes.IndexOf(selectedShape);
+            index--;
+            if (index < 0) return;
+
+            shapes.Remove(selectedShape);
+            shapes.Insert(index, selectedShape);
+
+            ShapesChanged?.Invoke();
+        }
+
+        private void toFrontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (selectedShape == null) return;
+
+            int index = shapes.IndexOf(selectedShape);
+            index++;
+            if (index > shapes.Count) return;
+
+            shapes.Remove(selectedShape);
+            shapes.Insert(index, selectedShape);
+
+            ShapesChanged?.Invoke();
         }
     }
 }

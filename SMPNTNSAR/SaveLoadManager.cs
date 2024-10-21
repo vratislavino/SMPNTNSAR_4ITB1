@@ -24,9 +24,19 @@ namespace SMPNTNSAR
 
             var dtos = JsonConvert.DeserializeObject<List<Shape.ShapeDTO>>(stringToLoad);
             var shapes = dtos.Select(dto => {
-                Type t = dict[dto.shapeType].GetType(dto.shapeType);
-                return Activator.CreateInstance(t, dto) as Shape;
+                try
+                {
+                    Type t = dict[dto.shapeType].GetType(dto.shapeType);
+                    return Activator.CreateInstance(t, dto) as Shape;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    return null;
+                }
             }).ToList();
+
+            shapes.RemoveAll(shapes => shapes == null);
 
             return shapes;
         }

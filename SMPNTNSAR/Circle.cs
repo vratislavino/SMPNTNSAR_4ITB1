@@ -19,7 +19,7 @@ namespace SMPNTNSAR
             throw new NotImplementedException();
         }
 
-        public override void Draw(Graphics g)
+        protected override void DrawShape(Graphics g)
         {
             if(filled)
             {
@@ -28,7 +28,6 @@ namespace SMPNTNSAR
             {
                 g.DrawEllipse(pen, x, y, width, height);
             }
-            base.Draw(g);
         }
 
         public override bool IsMouseOver(int mx, int my)
